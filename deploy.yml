@@ -1,0 +1,11 @@
+---
+- hosts: servers
+  vars:
+    DOCKER_REGISTRY: 066203203749.dkr.ecr.eu-west-2.amazonaws.com
+  remote_user: root
+  tasks:
+  - name: "login to aws docker registry ECR - {{ DOCKER_REGISTRY }}"
+    shell: "aws ecr get-login --no-include-email | awk '{printf $6}' | docker login -u AWS https://{{ DOCKER_REGISTRY }} --password-stdin"
+  
+  - name: run docker container from docker image
+    shell: "docker run -d -p {{ HOST_PORT }}:{{ CONTAINER_PORT }} {{ DOCKER_REGISTRY }}/{{ MICROSERVICE_NAME }}"
