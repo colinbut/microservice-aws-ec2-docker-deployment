@@ -18,11 +18,11 @@ Support deploying currently 2 microservices:
 To deploy microservice-java microservice which is a Java 8 Spring Boot microservice running on default port 8080...
 
 ```bash
-ansible-playbook deploy.yml --extra-vars "HOST_PORT=8080 CONTAINER_PORT=8080 MICROSERVICE_NAME=microservice-java"
+ansible-playbook deploy.yml --extra-vars "VERSION=1.0.0-SNAPSHOT HOST_PORT=8080 CONTAINER_PORT=8080 MICROSERVICE_NAME=microservice-java"
 ```
 
 Similarily, to deploy a microservice-nodejs microservice which runs on default port 3000...
 
 ```bash
-ansible-playbook deploy.yml --extra-vars "HOST_PORT=3000 CONTAINER_PORT=3000 MICROSERVICE_NAME=microservice-nodejs"
+ansible-playbook deploy.yml --extra-vars "VERSION=1.0.0-SNAPSHOT HOST_PORT=3000 CONTAINER_PORT=3000 MICROSERVICE_NAME=microservice-nodejs"
 ```

@@ -2,10 +2,21 @@
 - hosts: servers
   vars:
     DOCKER_REGISTRY: 066203203749.dkr.ecr.eu-west-2.amazonaws.com
-  remote_user: root
+  vars_files:
+    - vars.yml
+  become: true
   tasks:
+
   - name: "login to aws docker registry ECR - {{ DOCKER_REGISTRY }}"
-    shell: "aws ecr get-login --no-include-email | awk '{printf $6}' | docker login -u AWS https://{{ DOCKER_REGISTRY }} --password-stdin"
+    shell: "aws ecr get-login --region {{ REGION }} --no-include-email | awk '{printf $6}' | docker login -u AWS https://{{ DOCKER_REGISTRY }} --password-stdin"
   
-  - name: run docker container from docker image
-    shell: "docker run -d -p {{ HOST_PORT }}:{{ CONTAINER_PORT }} {{ DOCKER_REGISTRY }}/{{ MICROSERVICE_NAME }}"
+  - name: "Find any existing running docker container"
+    shell: "docker ps -f name={{ MICROSERVICE_NAME }} -q"
+    register: EXISTING_DOCKER_CONTAINER_RESULT   
+
+  - name: "Stop existing running docker container if it exists"
+    shell: "docker stop {{ EXISTING_DOCKER_CONTAINER_RESULT.stdout }}"
+    when: (EXISTING_DOCKER_CONTAINER_RESULT.stdout is defined) and (EXISTING_DOCKER_CONTAINER_RESULT.stdout|length > 0) 
+
+  - name: Run docker container from docker image - {{ DOCKER_REGISTRY }}/{{ MICROSERVICE_NAME }}:{{ VERSION }}
+    shell: "docker run -d --rm --name {{ MICROSERVICE_NAME }} -p {{ HOST_PORT }}:{{ CONTAINER_PORT }} {{ DOCKER_REGISTRY }}/{{ MICROSERVICE_NAME }}:{{ VERSION }}"
