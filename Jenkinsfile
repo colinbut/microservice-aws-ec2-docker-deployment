@@ -7,13 +7,6 @@ pipeline {
         string(name: 'MICROSERVICE_PORT', description: 'The microservice port')
     }
     stages {
-        stage('Checkout') {
-            steps {
-                script {
-                    git 'https://github.com/colinbut/microservice-aws-ec2-docker-deployment.git/'
-                }
-            }
-        }
         stage('Execute Ansible Playbook') {
             steps {
                 // Needs Ansi Plugin that enables colourful printing on Console Log output
